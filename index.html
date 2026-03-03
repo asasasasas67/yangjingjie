@@ -1,224 +1,196 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>入機電競價目表</title>
+    <title>入機電競介紹</title>
     <style>
-        /* =========================================
-           頁面基礎樣式 (背景與佈局)
-           ========================================= */
+        :root {
+            --pink: #ffafbd;
+            --blue: #2193b0;
+            --neon-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--pink), 0 0 30px var(--blue);
+        }
+
         body, html {
             margin: 0;
             padding: 0;
-            width: 100%;
             height: 100%;
-            overflow: hidden; /* 防止滾動 */
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            font-family: 'Microsoft JhengHei', sans-serif;
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 背景：粉灰漸層 (與之前一致，營造氛圍) */
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            /* 粉左上，藍右下霧面背景 */
+            background: linear-gradient(135deg, var(--pink), var(--blue));
+            background-attachment: fixed;
         }
 
-        /* 雪花畫布 */
-        #snow-canvas {
+        /* 流星特效 */
+        .night {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            transform: rotateZ(45deg);
+            z-index: 0;
+        }
+
+        .shooting_star {
             position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 1;
+            left: 50%;
+            top: 50%;
+            height: 2px;
+            background: linear-gradient(-45deg, rgba(255,255,255,1), rgba(0,0,255,0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 6px rgba(255,255,255,1));
+            animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite;
         }
 
-        /* =========================================
-           中間主容器 (霧面天空藍)
-           ========================================= */
-        .central-card {
+        @keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
+        @keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(300px); } }
+
+        /* 生成多個流星 */
+        .shooting_star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+        .shooting_star:nth-child(2) { top: 30%; left: 50%; animation-delay: 1.5s; }
+        .shooting_star:nth-child(3) { top: 70%; left: 10%; animation-delay: 2.5s; }
+        .shooting_star:nth-child(4) { top: 50%; left: 80%; animation-delay: 4s; }
+
+        /* 霧面 GUI 容器 */
+        .gui-container {
             position: relative;
             z-index: 10;
-            width: 350px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            background: rgba(240, 240, 240, 0.4);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
             padding: 40px;
-            /* 霧面天空藍與圓角 */
-            background: rgba(135, 206, 235, 0.25);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            overflow-y: auto;
+            color: #333;
             text-align: center;
-            /* Y軸方向彈性佈局 */
-            display: flex;
-            flex-direction: column;
-            gap: 20px; /* 元素間距 */
         }
 
-        /* =========================================
-           (關鍵效果) Simple7227 漸層霓虹標題
-           ========================================= */
-        .neon-title {
-            margin: 0;
-            font-size: 2.5rem;
-            letter-spacing: 2px;
+        /* 標題霓虹燈效果 */
+        .main-title {
+            font-size: 2.5em;
             font-weight: bold;
-            
-            /* 1. 文字漸層色 (使用 text-fill-color) */
-            background: linear-gradient(90deg, #ff007f 0%, #00ffff 100%);
+            color: #fff;
+            text-shadow: var(--neon-shadow);
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+        }
+
+        /* 價目表大標題 */
+        .price-list-title {
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
-            
-            /* 2. 霓虹閃爍效果 (多層淺藍 text-shadow + 動畫) */
-            text-shadow: 0 0 1px rgba(255,255,255,0.8),
-                         0 0 5px rgba(0,255,255,0.7),
-                         0 0 10px rgba(0,191,255,0.6),
-                         0 0 20px rgba(0,191,255,0.5),
-                         0 0 40px rgba(0,191,255,0.4);
-            
-            /* 3. 綁定閃爍動畫 */
-            animation: neon-flicker 1.5s infinite alternate;
+            font-size: 1.8em;
+            margin-top: 10px;
         }
 
-        /* =========================================
-           霓虹閃爍動畫定義
-           ========================================= */
-        @keyframes neon-flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: 0 0 1px rgba(255,255,255,0.8),
-                             0 0 5px rgba(0,255,255,0.7),
-                             0 0 10px rgba(0,191,255,0.6),
-                             0 0 20px rgba(0,191,255,0.5);
-                opacity: 1;
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-                opacity: 0.5; /* 模擬短暫斷電閃爍 */
-            }
+        /* 金牌打手 (金色螢光) */
+        .gold-title {
+            color: #ffd700;
+            text-shadow: 0 0 10px #fff700, 0 0 20px #ffcc00;
+            font-size: 1.5em;
+            margin: 20px 0;
         }
 
-        /* =========================================
-           模板專用樣式 (用於新增文字)
-           ========================================= */
-        .template-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px; /* 段落間距 */
-            color: #555; /* 預設文字顏色，較深 */
+        /* 魔王護 (紅黑漸層) */
+        .devil-title {
+            background: linear-gradient(to right, #000000, #ff0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5em;
+            font-weight: 900;
+            margin: 20px 0;
         }
 
-        /* 模板中的標題 */
-        .template-heading {
-            font-size: 1.2rem;
-            font-weight: bold;
-            /* 顏色改為與背景呼應的柔粉色 */
-            color: #b19cd9; 
-            margin: 0;
+        /* 內容字體 (深藍紫漸層) */
+        .content-text {
+            background: linear-gradient(45deg, #1A237E, #7B1FA2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            line-height: 1.8;
+            list-style: none;
+            padding: 0;
         }
 
-        /* 模板中的段落 */
-        .template-paragraph {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin: 0;
-            color: #666; /* 稍微淡一些 */
+        .highlight-box {
+            border-left: 4px solid #1A237E;
+            margin: 10px auto;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            width: fit-content;
         }
 
-        /* ========================================================
-           ★ 自定義模板 (在此修改文字和顏色)
-           請編輯 HTML 部分的對應區塊
-           CSS 的顏色可以透過搜尋對應類名 (e.g., .template-heading) 修改
-           ======================================================== */
+        .footer-note {
+            font-size: 0.9em;
+            margin-top: 30px;
+            font-style: italic;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="snow-canvas"></canvas>
+    <div class="night">
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+    </div>
 
-    <div class="central-card">
+    <div class="gui-container">
+        <div class="main-title">入機電競介紹</div>
         
-        <h1 class="neon-title">入機電競價目表</h1>
+        <div class="price-list-title"> 入機電競價目表</div>
 
-        <div class="template-section">
-            
-            <h2 class="template-heading">金牌打手</h2>
-            
-            <p class="template-paragraph">
-                普壩:$10
-            <p class="template-paragraph">
-                保底600萬
-            </p>
-            
-            <h3 class="template-heading">魔王護</h3>
-            
-            <p class="template-paragraph">
-                壓力單:20/場
-            </p>
-            <p class="template-paragraph">
-                打手幫老闆起娤，老闆打不好時打手可壓力老闆
-            </p>
+        <div class="gold-title"> 金牌打手</div>
+        <ul class="content-text">
+            <li><strong>體驗單: 5</strong></li>
+            <li>普壩保底200萬</li>
+            <li>普壩清圖</li>
+        </ul>
+
+        <ul class="content-text">
+            <li><strong>抖音單: 10</strong></li>
+            <li>普壩保底400萬 / 機壩保底200萬</li>
+            <div class="highlight-box"> 老闆龜撤離滑抖音打手投餵 </div>
+        </ul>
+
+        <div class="devil-title"> 入機魔王護</div>
+        <ul class="content-text">
+            <li><strong>清圖單: 20</strong></li>
+            <li>普壩保底600萬</li>
+            <li>不清圖不撤</li>
+        </ul>
+
+        <ul class="content-text">
+            <li><strong>壓力單: 15</strong></li>
+            <li>普壩保底300萬</li>
+            <li>打手幫起裝給老闆打</li>
+        </ul>
+
+        <ul class="content-text">
+            <li><strong>航天體驗單: 10/把</strong></li>
+            <li>機航保底100萬</li>
+            <li>不幫帶大紅包</li>
+        </ul>
+
+        <div class="footer-note content-text">
+            入機電競打手有一切壓力老闆的權力，若老闆不服就受著
         </div>
-        </div>
+    </div>
 
-    <script>
-        const canvas = document.getElementById('snow-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, snowflakes = [];
-
-        function init() {
-            updateSize();
-            createSnowflakes();
-            animate();
-        }
-
-        function updateSize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-
-        function createSnowflakes() {
-            const count = 100;
-            snowflakes = [];
-            for (let i = 0; i < count; i++) {
-                snowflakes.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    radius: Math.random() * 3 + 1,
-                    speed: Math.random() * 1 + 0.5,
-                    opacity: Math.random() * 0.7
-                });
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            snowflakes.forEach(flake => {
-                ctx.beginPath();
-                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
-                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
-                ctx.fill();
-
-                flake.y += flake.speed;
-                flake.x += Math.sin(flake.y / 50) * 0.5;
-
-                if (flake.y > height) {
-                    flake.y = -10;
-                    flake.x = Math.random() * width;
-                }
-            });
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', () => {
-            updateSize();
-            createSnowflakes();
-        });
-
-        init();
-    </script>
 </body>
 </html>
+
+
 
 
 
