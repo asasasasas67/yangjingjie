@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>粉灰漸層飄雪頁面</title>
+    <title>Simple7227 霓虹雪夜</title>
     <style>
-        /* 全域樣式設定 */
+        /* =========================================
+           頁面基礎樣式 (背景與佈局)
+           ========================================= */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* 防止出現滾動條 */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* 背景：粉灰漸層 */
-        body {
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            overflow: hidden; /* 防止滾動 */
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            /* 背景：粉灰漸層 (與之前一致，營造氛圍) */
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
         }
 
         /* 雪花畫布 */
@@ -28,38 +27,137 @@
             position: absolute;
             top: 0;
             left: 0;
-            pointer-events: none; /* 讓滑鼠可以穿透畫布點擊後方 */
+            pointer-events: none;
             z-index: 1;
         }
 
-        /* 中間的霧面天空藍區塊 (Glassmorphism) */
-        .glass-box {
+        /* =========================================
+           中間主容器 (霧面天空藍)
+           ========================================= */
+        .central-card {
             position: relative;
             z-index: 10;
-            width: 400px;
+            width: 350px;
             padding: 40px;
-            background: rgba(135, 206, 235, 0.3); /* 天空藍半透明 */
-            backdrop-filter: blur(15px); /* 關鍵：霧面模糊效果 */
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            /* 霧面天空藍與圓角 */
+            background: rgba(135, 206, 235, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             text-align: center;
-            color: #fff;
+            /* Y軸方向彈性佈局 */
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* 元素間距 */
         }
 
-        h1 { margin: 0; font-size: 2rem; }
-        p { opacity: 0.9; }
+        /* =========================================
+           (關鍵效果) Simple7227 漸層霓虹標題
+           ========================================= */
+        .neon-title {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            font-weight: bold;
+            
+            /* 1. 文字漸層色 (使用 text-fill-color) */
+            background: linear-gradient(90deg, #ff007f 0%, #00ffff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* 2. 霓虹閃爍效果 (多層淺藍 text-shadow + 動畫) */
+            text-shadow: 0 0 1px rgba(255,255,255,0.8),
+                         0 0 5px rgba(0,255,255,0.7),
+                         0 0 10px rgba(0,191,255,0.6),
+                         0 0 20px rgba(0,191,255,0.5),
+                         0 0 40px rgba(0,191,255,0.4);
+            
+            /* 3. 綁定閃爍動畫 */
+            animation: neon-flicker 1.5s infinite alternate;
+        }
+
+        /* =========================================
+           霓虹閃爍動畫定義
+           ========================================= */
+        @keyframes neon-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 0 0 1px rgba(255,255,255,0.8),
+                             0 0 5px rgba(0,255,255,0.7),
+                             0 0 10px rgba(0,191,255,0.6),
+                             0 0 20px rgba(0,191,255,0.5);
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                opacity: 0.5; /* 模擬短暫斷電閃爍 */
+            }
+        }
+
+        /* =========================================
+           模板專用樣式 (用於新增文字)
+           ========================================= */
+        .template-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* 段落間距 */
+            color: #555; /* 預設文字顏色，較深 */
+        }
+
+        /* 模板中的標題 */
+        .template-heading {
+            font-size: 1.2rem;
+            font-weight: bold;
+            /* 顏色改為與背景呼應的柔粉色 */
+            color: #b19cd9; 
+            margin: 0;
+        }
+
+        /* 模板中的段落 */
+        .template-paragraph {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+            color: #666; /* 稍微淡一些 */
+        }
+
+        /* ========================================================
+           ★ 自定義模板 (在此修改文字和顏色)
+           請編輯 HTML 部分的對應區塊
+           CSS 的顏色可以透過搜尋對應類名 (e.g., .template-heading) 修改
+           ======================================================== */
     </style>
 </head>
 <body>
 
     <canvas id="snow-canvas"></canvas>
 
-    <div class="glass-box">
-        <h1>你知道嗎?</h1>
-        <p> 我超級想<br>舔習近平的屌。</p>
-    </div>
+    <div class="central-card">
+        
+        <h1 class="neon-title">入機電競價目表</h1>
+
+        <div class="template-section">
+            
+            <h2 class="template-heading">金牌打手</h2>
+            
+            <p class="template-paragraph">
+                普壩:$10
+            <p class="template-paragraph">
+                保底600萬
+            </p>
+            
+            <h3 class="template-heading">魔王護</h3>
+            
+            <p class="template-paragraph">
+                壓力單:20/場
+            </p>
+            <p class="template-paragraph">
+                打手幫老闆起娤，老闆打不好時打手可壓力老闆
+            </p>
+        </div>
+        </div>
 
     <script>
         const canvas = document.getElementById('snow-canvas');
@@ -80,48 +178,46 @@
         }
 
         function createSnowflakes() {
-            const count = 150; // 雪花數量
+            const count = 100;
+            snowflakes = [];
             for (let i = 0; i < count; i++) {
                 snowflakes.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
                     radius: Math.random() * 3 + 1,
                     speed: Math.random() * 1 + 0.5,
-                    opacity: Math.random() * 0.8
+                    opacity: Math.random() * 0.7
                 });
             }
         }
 
         function animate() {
             ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = "white";
-
             snowflakes.forEach(flake => {
                 ctx.beginPath();
-                ctx.globalAlpha = flake.opacity;
+                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
                 ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // 更新位置
                 flake.y += flake.speed;
-                flake.x += Math.sin(flake.y / 50) * 0.5; // 輕微左右晃動
+                flake.x += Math.sin(flake.y / 50) * 0.5;
 
-                // 如果雪花落到底部，重回頂部
                 if (flake.y > height) {
                     flake.y = -10;
                     flake.x = Math.random() * width;
                 }
             });
-
             requestAnimationFrame(animate);
         }
 
         window.addEventListener('resize', () => {
             updateSize();
+            createSnowflakes();
         });
 
         init();
     </script>
 </body>
 </html>
+
 
